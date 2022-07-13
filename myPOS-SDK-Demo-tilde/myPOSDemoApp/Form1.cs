@@ -48,6 +48,8 @@ namespace myPOSDemoApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
+
             timer = new System.Timers.Timer();
             timer.Interval = 1000;
             timer.Elapsed += Timer_Elapsed;
@@ -294,6 +296,11 @@ namespace myPOSDemoApp
         }
 
         private void btnPurchase_Click(object sender, EventArgs e)
+        {
+            PurchaseTilde();
+        }
+
+        private void PurchaseTilde ()
         {
             if (!ParseAmount() || !ParseCurrency())
             {
@@ -884,12 +891,7 @@ namespace myPOSDemoApp
         // Run every second
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-          /*  Console.WriteLine("Test:");
-            if (newTildeMessage == true)
-            {
-                newTildeMessage = false;
-                ProcessTildeMessage();
-            }*/
+
         }
 
         void ProcessTildeMessage()
@@ -955,21 +957,6 @@ namespace myPOSDemoApp
         private void btnReceive_Click(object sender, EventArgs e)
         {
             ProcessTildeMessage();
-            /*TildeDataCount++;
-            TildeDataString = TildeDataCount.ToString();
-            txtMessageCount.Text = TildeDataString;
-            try
-            {
-                if (serialPort1.IsOpen)
-                {
-                    TildeData = serialPort1.ReadExisting();
-                    txtReceive.Text = TildeData;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }*/
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -1002,23 +989,22 @@ namespace myPOSDemoApp
 
             //newTildeMessage = true;
             Console.WriteLine("Data Received:");
+            Console.WriteLine(IncomingMessageTilde);
+
+            if (IncomingMessageTilde == "Doggo")
+            {
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.02"));
+            }
+            if (IncomingMessageTilde == "Neko")
+            {
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.04"));
+            }
         }
 
-        /*private void User_Interface_COM_Load(object sender, EventArgs e)
+        // Used the txt box to get around the thread error
+        private void txtAmount_TextChanged(object sender, EventArgs e)
         {
-            string[] ports = System.IO.Ports.SerialPort.GetPortNames();
-            cboPort.Items.AddRange(ports);
-            cboPort.SelectedIndex = 0;
-            btnClose.Enabled = false;
-
-
-        }*/
-
-
-        /*private void User_Interface_COM_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (serialPort1.IsOpen)
-                serialPort1.Close();
-        }*/
+            PurchaseTilde();
+        }
     }
 }

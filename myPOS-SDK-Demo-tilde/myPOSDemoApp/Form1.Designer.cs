@@ -257,6 +257,7 @@
             this.txtAmount.Name = "txtAmount";
             this.txtAmount.Size = new System.Drawing.Size(217, 22);
             this.txtAmount.TabIndex = 13;
+            this.txtAmount.TextChanged += new System.EventHandler(this.txtAmount_TextChanged);
             // 
             // cmbCurrency
             // 
