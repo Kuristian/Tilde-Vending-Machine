@@ -39,6 +39,11 @@ namespace myPOSDemoApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            string[] ports = System.IO.Ports.SerialPort.GetPortNames();
+            cboPort.Items.AddRange(ports);
+            cboPort.SelectedIndex = 0;
+            btnClose.Enabled = false;
+
             RefreshComPorts();
             cmbCurrency.DataSource = Enum.GetValues(typeof(Currencies));
             cmbCurrency.SelectedItem = Currencies.EUR;
@@ -856,5 +861,110 @@ namespace myPOSDemoApp
 		{
 			t.PrintExternalUTF8(txtPrintData.Text);
 		}
+
+        private void label21_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            btnOpen.Enabled = false;
+            btnClose.Enabled = true;
+            try
+            {
+                serialPort1.PortName = cboPort.Text;
+                serialPort1.Open();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtReceive_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtSend_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSend_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPort1.IsOpen)
+                {
+                    serialPort1.WriteLine(txtSend.Text + Environment.NewLine);
+                    txtSend.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnReceive_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPort1.IsOpen)
+                {
+                    txtReceive.Text = serialPort1.ReadExisting();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            btnOpen.Enabled = true;
+            btnClose.Enabled = false;
+            try
+            {
+                serialPort1.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void RefreshMicro_Click(object sender, EventArgs e)
+        {
+            string[] ports = System.IO.Ports.SerialPort.GetPortNames();
+            cboPort.Items.Clear();
+            cboPort.Items.AddRange(ports);
+            cboPort.SelectedIndex = 0;
+        }
+
+        /*private void User_Interface_COM_Load(object sender, EventArgs e)
+        {
+            string[] ports = System.IO.Ports.SerialPort.GetPortNames();
+            cboPort.Items.AddRange(ports);
+            cboPort.SelectedIndex = 0;
+            btnClose.Enabled = false;
+
+
+        }*/
+
+
+        /*private void User_Interface_COM_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (serialPort1.IsOpen)
+                serialPort1.Close();
+        }*/
     }
 }
