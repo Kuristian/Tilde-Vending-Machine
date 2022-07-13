@@ -1,6 +1,6 @@
 ﻿namespace myPOSTerminalDemoApp
 {
-    partial class User_Interface_COM
+    partial class User_Form
     {
         /// <summary>
         /// Required designer variable.
@@ -59,6 +59,7 @@
             this.cboPort.Name = "cboPort";
             this.cboPort.Size = new System.Drawing.Size(121, 24);
             this.cboPort.TabIndex = 1;
+            this.cboPort.SelectedIndexChanged += new System.EventHandler(this.cboPort_SelectedIndexChanged);
             // 
             // btnOpen
             // 

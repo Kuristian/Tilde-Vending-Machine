@@ -1,4 +1,5 @@
-﻿using System;
+﻿using myPOSTerminalDemoApp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace myPOSDemoApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new User_Interface_COM());
+            Application.Run(new User_Form());
             Application.Run(new Form1());
         }
     }

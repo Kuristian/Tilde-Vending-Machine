@@ -67,11 +67,11 @@
     <Compile Include="ReceiptReceiverForm.Designer.cs">
       <DependentUpon>ReceiptReceiverForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="User_Interface_COM.cs">
+    <Compile Include="User_Form.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="User_Interface_COM.Designer.cs">
-      <DependentUpon>User_Interface_COM.cs</DependentUpon>
+    <Compile Include="User_Form.Designer.cs">
+      <DependentUpon>User_Form.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -89,8 +89,8 @@
     <EmbeddedResource Include="ReceiptReceiverForm.resx">
       <DependentUpon>ReceiptReceiverForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="User_Interface_COM.resx">
-      <DependentUpon>User_Interface_COM.cs</DependentUpon>
+    <EmbeddedResource Include="User_Form.resx">
+      <DependentUpon>User_Form.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

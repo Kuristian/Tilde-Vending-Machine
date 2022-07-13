@@ -10,19 +10,21 @@ using System.Windows.Forms;
 
 namespace myPOSTerminalDemoApp
 {
-    public partial class User_Interface_COM : Form
+    public partial class User_Form : Form
     {
-        public User_Interface_COM()
+        public User_Form()
         {
             InitializeComponent();
         }
 
         private void User_Interface_COM_Load(object sender, EventArgs e)
         {
-            //string[] ports = serialPort1.GetPortNames();
-           // cboPort.Items.AddRange(ports);
+            string[] ports = System.IO.Ports.SerialPort.GetPortNames();
+            cboPort.Items.AddRange(ports);
             cboPort.SelectedIndex = 0;
             btnClose.Enabled = false;
+            
+           
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -109,6 +111,11 @@ namespace myPOSTerminalDemoApp
         {
             if (serialPort1.IsOpen)
                 serialPort1.Close();
+        }
+
+        private void cboPort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
