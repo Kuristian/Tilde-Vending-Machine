@@ -6,12 +6,20 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Timers;
+
 
 namespace myPOSDemoApp
 {
     public partial class Form1 : Form
     {
+        private System.Timers.Timer timer;
         double Amount;
+        bool newTildeMessage = false;
+        string TildeData;
+        int TildeDataCount = 0;
+        string TildeDataString;
+        string IncomingMessageTilde;
         Currencies cur;
         String PAN = "";
         String ExpiryDate = "";
@@ -21,6 +29,7 @@ namespace myPOSDemoApp
         myPOSTerminal t = new myPOSTerminal();
         public Form1()
         {
+
             InitializeComponent();
 
             t.ProcessingFinished += ProcessResult;
@@ -39,6 +48,11 @@ namespace myPOSDemoApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            timer = new System.Timers.Timer();
+            timer.Interval = 1000;
+            timer.Elapsed += Timer_Elapsed;
+            timer.Start();
+
             string[] ports = System.IO.Ports.SerialPort.GetPortNames();
             cboPort.Items.AddRange(ports);
             cboPort.SelectedIndex = 0;
@@ -60,6 +74,7 @@ namespace myPOSDemoApp
             this.Text = "myPOSDemoApp Version " + version.ToString();
             AddLog("myPOSDemoApp Version: " + version.ToString());
         }
+
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
@@ -862,6 +877,30 @@ namespace myPOSDemoApp
 			t.PrintExternalUTF8(txtPrintData.Text);
 		}
 
+
+        // TILDE SPAGHET ZONE //
+
+
+        // Run every second
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+          /*  Console.WriteLine("Test:");
+            if (newTildeMessage == true)
+            {
+                newTildeMessage = false;
+                ProcessTildeMessage();
+            }*/
+        }
+
+        void ProcessTildeMessage()
+        {
+            TildeDataCount++;
+            TildeDataString = TildeDataCount.ToString();
+            //txtMessageCount.Text = TildeDataString;
+            txtMessageCount.Invoke((MethodInvoker)(() => txtMessageCount.Text = TildeDataString));
+            txtReceive.Invoke((MethodInvoker)(() => txtReceive.Text = IncomingMessageTilde));
+        }
+
         private void label21_Click(object sender, EventArgs e)
         {
 
@@ -915,17 +954,22 @@ namespace myPOSDemoApp
 
         private void btnReceive_Click(object sender, EventArgs e)
         {
+            ProcessTildeMessage();
+            /*TildeDataCount++;
+            TildeDataString = TildeDataCount.ToString();
+            txtMessageCount.Text = TildeDataString;
             try
             {
                 if (serialPort1.IsOpen)
                 {
-                    txtReceive.Text = serialPort1.ReadExisting();
+                    TildeData = serialPort1.ReadExisting();
+                    txtReceive.Text = TildeData;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }*/
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -941,13 +985,23 @@ namespace myPOSDemoApp
                 MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        
         private void RefreshMicro_Click(object sender, EventArgs e)
         {
             string[] ports = System.IO.Ports.SerialPort.GetPortNames();
             cboPort.Items.Clear();
             cboPort.Items.AddRange(ports);
             cboPort.SelectedIndex = 0;
+        }
+        
+        private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            SerialPort sp = (SerialPort)sender;
+            IncomingMessageTilde = sp.ReadExisting();
+            ProcessTildeMessage();
+
+            //newTildeMessage = true;
+            Console.WriteLine("Data Received:");
         }
 
         /*private void User_Interface_COM_Load(object sender, EventArgs e)

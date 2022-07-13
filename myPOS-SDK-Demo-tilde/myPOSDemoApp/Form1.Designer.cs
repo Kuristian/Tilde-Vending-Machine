@@ -126,6 +126,8 @@
             this.txtReceive = new System.Windows.Forms.TextBox();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.RefreshMicro = new System.Windows.Forms.Button();
+            this.txtMessageCount = new System.Windows.Forms.TextBox();
+            this.MessageCount = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // cmbComPorts
@@ -1096,6 +1098,10 @@
             this.txtReceive.TabIndex = 55;
             this.txtReceive.TextChanged += new System.EventHandler(this.txtReceive_TextChanged);
             // 
+            // serialPort1
+            // 
+            this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort1_DataReceived);
+            // 
             // RefreshMicro
             // 
             this.RefreshMicro.Location = new System.Drawing.Point(20, 1170);
@@ -1106,11 +1112,30 @@
             this.RefreshMicro.UseVisualStyleBackColor = true;
             this.RefreshMicro.Click += new System.EventHandler(this.RefreshMicro_Click);
             // 
+            // txtMessageCount
+            // 
+            this.txtMessageCount.Location = new System.Drawing.Point(646, 1170);
+            this.txtMessageCount.Multiline = true;
+            this.txtMessageCount.Name = "txtMessageCount";
+            this.txtMessageCount.Size = new System.Drawing.Size(75, 74);
+            this.txtMessageCount.TabIndex = 58;
+            // 
+            // MessageCount
+            // 
+            this.MessageCount.AutoSize = true;
+            this.MessageCount.Location = new System.Drawing.Point(646, 1147);
+            this.MessageCount.Name = "MessageCount";
+            this.MessageCount.Size = new System.Drawing.Size(104, 16);
+            this.MessageCount.TabIndex = 59;
+            this.MessageCount.Text = "Message Count:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1871, 1256);
+            this.Controls.Add(this.MessageCount);
+            this.Controls.Add(this.txtMessageCount);
             this.Controls.Add(this.RefreshMicro);
             this.Controls.Add(this.btnReceive);
             this.Controls.Add(this.txtReceive);
@@ -1313,6 +1338,8 @@
         private System.Windows.Forms.TextBox txtReceive;
         private System.IO.Ports.SerialPort serialPort1;
         private System.Windows.Forms.Button RefreshMicro;
+        private System.Windows.Forms.TextBox txtMessageCount;
+        private System.Windows.Forms.Label MessageCount;
     }
 }
 
