@@ -17,9 +17,9 @@
 #define sensitivity 6
 #define SelectionMenuOptions 5
 
-#define outputA 26//8
-#define outputB 27//7
-#define RotaryEncoderButtonPin 12//6
+#define outputA 26                // 8
+#define outputB 27                // 7
+#define RotaryEncoderButtonPin 4 // 6
 
 #define Welcome 1
 #define Selection 2
@@ -120,6 +120,8 @@ void setup()
 {
   pinMode(outputA, INPUT);
   pinMode(outputB, INPUT);
+    pinMode(RotaryEncoderButtonPin, INPUT);
+
   Serial.begin(9600);
   aLastState = digitalRead(outputA);
 
@@ -201,6 +203,13 @@ void loop()
   case Selection:
     if (StateFlag == false || InputChange == true)
     {
+     /* if (RotaryEncoderButtonFlag == 1)
+      {
+        State = Check;
+        InputChange = true;
+        StateFlag = false;
+        RotaryEncoderButtonFlag = false;
+      }*/
       if (CursorRotaryEncoder < 0)
         CursorRotaryEncoder = SelectionMenuOptions * sensitivity - 1;
       if (CursorRotaryEncoder >= SelectionMenuOptions * sensitivity)
@@ -256,7 +265,7 @@ void loop()
           display.setCursor(45, 40);
           display.println("10 euros");
           break;
-/*
+
         case 2:
           display.setTextSize(1);
           display.setTextColor(SSD1306_WHITE);
@@ -278,7 +287,7 @@ void loop()
           display.setCursor(45, 40);
           display.println("8 euros");
           break;
-*/
+
         case 4:
           display.setTextSize(1);
           display.setTextColor(SSD1306_WHITE);
@@ -299,8 +308,68 @@ void loop()
     break;
 
   case Check:
-    Serial.println("JouleThief");
-    DisplayTextCentered("JouleThief");
+    DisplayTextCentered("Poulet");
+      if (InputChange == true&& RotaryEncoderButtonFlag == true) 
+      {State = Welcome;
+      RotaryEncoderButtonFlag = false;
+      InputChange = false;
+      }
+
+   /* if (StateFlag == false || InputChange == true)
+    {
+      display.setTextSize(1);
+      display.setTextColor(SSD1306_WHITE);
+      display.setCursor(20, 20);
+      display.println("Confirm selection of");
+      switch (MenuSelection)
+      {
+      case 0:
+        display.setCursor(10, 30);
+        display.println("Tyrannopixelus Rex");
+        break;
+
+      case 1:
+        display.setCursor(10, 30);
+        display.println("Coffee Beans pins");
+        break;
+
+      case 2:
+        display.setTextSize(1);
+        display.setTextColor(SSD1306_WHITE);
+        display.setCursor(20, 20);
+        display.println("Little Prince pins");
+        // display.setCursor(10, 30);
+        // display.println("Tyrannopixelus Rex");
+        display.setCursor(45, 40);
+        display.println("20 euros");
+        break;
+
+      case 3:
+        display.setTextSize(1);
+        display.setTextColor(SSD1306_WHITE);
+        display.setCursor(20, 20);
+        display.println("Patch TBD");
+        // display.setCursor(10, 30);
+        // display.println("Tyrannopixelus Rex");
+        display.setCursor(45, 40);
+        display.println("8 euros");
+        break;
+
+      case 4:
+        display.setTextSize(1);
+        display.setTextColor(SSD1306_WHITE);
+        display.setCursor(20, 20);
+        display.println("Joule Thief Cat");
+        // display.setCursor(10, 30);
+        // display.println("Tyrannopixelus Rex");
+        display.setCursor(45, 40);
+        display.println("25 euros");
+        break;
+      }
+      display.display();
+      InputChange = false;
+      StateFlag = true;
+    }*/
     break;
 
   default:
