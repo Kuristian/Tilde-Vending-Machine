@@ -17,9 +17,9 @@
 #define sensitivity 6
 #define SelectionMenuOptions 5
 
-#define outputA 8
-#define outputB 7
-#define RotaryEncoderButtonPin 6
+#define outputA 26//8
+#define outputB 27//7
+#define RotaryEncoderButtonPin 12//6
 
 #define Welcome 1
 #define Selection 2
@@ -38,11 +38,11 @@
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 // Declaration for SSD1306 display connected using software SPI (default case):
-#define OLED_MOSI 9
-#define OLED_CLK 10
-#define OLED_DC 11
-#define OLED_CS 12
-#define OLED_RESET 13
+#define OLED_MOSI 13
+#define OLED_CLK 14
+#define OLED_DC 32
+#define OLED_CS 33
+#define OLED_RESET 25
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
                          OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
@@ -190,7 +190,7 @@ void loop()
       MillisTimerState1 = millis();
       StateFlag = true;
     }
-    if (MillisTimerState1 + 5000 < millis())
+    if (MillisTimerState1 + 1500 < millis())
     {
       State = Selection;
       InputChange = true;
