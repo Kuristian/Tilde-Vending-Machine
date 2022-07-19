@@ -7,7 +7,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Timers;
-
+using System.Threading.Tasks;
+using System.IO;
 
 namespace myPOSDemoApp
 {
@@ -40,7 +41,7 @@ namespace myPOSDemoApp
             t.onPinEntered += _PinEntered;
             t.onPresentDCC += _PresentDCC;
             t.onDCCSelected += _DCCSelected;
-            t.onApprovalGetReceiptData += _ReceiptReceiver;
+            //t.onApprovalGetReceiptData += _ReceiptReceiver; //Tilde prevent a receipt pop up
             t.SetLanguage(Language.English);
             t.SetCOMTimeout(3000);
             t.isFixedPinpad = true;
@@ -122,12 +123,111 @@ namespace myPOSDemoApp
                 sb.AppendFormat("AID Preferred Name: {0}\r\n", r.TranData.ApplicationPreferredName);
                 sb.AppendFormat("STAN: {0}\r\n", r.TranData.Stan);
                 sb.AppendFormat("Signature Required: {0}\r\n", r.TranData.SignatureRequired ? "Yes" : "No");
-				sb.AppendFormat("Software Version: {0}\r\n", r.TranData.SoftwareVersion);
-			}
+                sb.AppendFormat("Software Version: {0}\r\n", r.TranData.SoftwareVersion);
+            }
+            string log = sb.ToString();
+            WriteToFile(log);
+            AddLog(log);
+            ///////
+            string transactionStatusStrName = Enum.GetName(typeof(TransactionStatus), r.Status);
+            bool success = false;
+            switch (r.Status) 
+            {
 
-            AddLog(sb.ToString());
-            MessageBox.Show(sb.ToString());
+                /* ERRORs to implement
+
+        Success = 0,
+
+
+        Busy = 1,
+        SyntaxError = 2,
+        UnsupportedParam = 3,
+        UnsupportedMethod = 4,
+
+
+        NoCardFound = 5,
+
+        UnsupportedCard = 6,
+
+        CardChipError = 7,
+
+        InvalidPin = 9,
+
+        PinCountLimitExceeded = 10,
+
+        UserCancel = 13,
+
+        InternalError = 14,
+        Timeout = -1
+        CommunicationError = 0xF,
+        InvalidAmount = 19,
+
+        InvalidDataFromHost = 12,
+        TransactionNotFound = 17,
+        NoPrinterAvailable = 21,
+        LastTransactionIncomplete = 20,
+        NoPaper = 22,
+        FallbackToMagstripe = 8,
+        PinCheckOnline = 11,
+        SSLError = 0x10,
+        ReversalNotFound = 18,
+        IncorrectDataForPrint = 23,
+        IncorrectLogoIndex = 24,
+        ActivationRequired = 25,
+        MandatoryUpdateRequired = 26,
+        TerminalAlreadyActive = 27,
+        ActivationUnsuccessful = 28,
+        NoUpdateFound = 29,
+        SoftwareUpdateUnsuccessful = 30,
+        SoftwareUpdateWaitHost = 0x1F,
+        SoftwareUpdateDontWaitHost = 0x20,
+        DeactivationUnsuccessful = 33,
+        OptionalUpdateRequired = 34,
+        WrongCode = 35,
+        DeactivationNotFinished = 36,
+        FingerprintNotFound = 37,
+        UnsupportedProtocolVersion = 38,
+        WrongPreauthCode = 39,
+        PreauthCompleted = 40,
+        RemotelyActivated = 41,
+        IvalidPAN = 47,
+        InvalidExpiryDate = 48,
+        WrongPassword = 49,
+        SuccessWithInfo = 100,
+
+                */
+
+                case TransactionStatus.Success: 
+                case TransactionStatus.SuccessWithInfo:
+                    success = true;
+                    Console.WriteLine("GROSSE BROUETTE");
+                    serialPort1.WriteLine("42" + Environment.NewLine);
+
+                    break;
+                default:
+                    success = false;
+                    break;
+            }
+            ///////
+            //MessageBox.Show(sb.ToString()); // Tilde remove the pop up window
         }
+
+        public static async Task WriteToFile(string text)
+        {
+            StreamWriter fileWriter = null;
+            try
+            {
+                fileWriter = new StreamWriter("MyFile.txt", append: true);
+                await fileWriter.WriteLineAsync(text);
+
+            }
+            catch (System.IO.IOException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            if (fileWriter != null) fileWriter.Close();
+        }
+
 
         delegate void AddLogDelegate(string msg);
         protected void AddLog(string msg)
@@ -298,6 +398,7 @@ namespace myPOSDemoApp
         private void btnPurchase_Click(object sender, EventArgs e)
         {
             PurchaseTilde();
+            Console.WriteLine("DEBUGwwwwwaaaaaaa");
         }
 
         private void PurchaseTilde ()
@@ -991,20 +1092,62 @@ namespace myPOSDemoApp
             Console.WriteLine("Data Received:");
             Console.WriteLine(IncomingMessageTilde);
 
-            if (IncomingMessageTilde == "Doggo")
+            txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.19")); // terrible but that's to trigger the event in the case of 2 consecutive items with the same price being requested
+
+
+            if (IncomingMessageTilde == "scarabblack")
             {
+                newTildeMessage = true;
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.01"));
+            }
+
+            if (IncomingMessageTilde == "scarabblue")
+            {
+                newTildeMessage = true;
                 txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.02"));
             }
-            if (IncomingMessageTilde == "Neko")
+
+            if (IncomingMessageTilde == "joulethief")
             {
+                newTildeMessage = true;
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.03"));
+               // Console.WriteLine("DEBUG");
+            }
+
+            if (IncomingMessageTilde == "hatsanta")
+            {
+                newTildeMessage = true;
                 txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.04"));
+            }
+
+            if (IncomingMessageTilde == "hatstraw")
+            {
+                newTildeMessage = true;
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.05"));
+            }
+
+            if (IncomingMessageTilde == "hatwitch")
+            {
+                newTildeMessage = true;
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.06"));
+            }
+
+            if (IncomingMessageTilde == "patch")
+            {
+                newTildeMessage = true;
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.07"));
             }
         }
 
         // Used the txt box to get around the thread error
         private void txtAmount_TextChanged(object sender, EventArgs e)
         {
-            PurchaseTilde();
+            //Console.WriteLine("DEBUGwwwww");
+            if (newTildeMessage == true)
+            {
+                PurchaseTilde();
+                newTildeMessage = false ;
+            }
         }
     }
 }
