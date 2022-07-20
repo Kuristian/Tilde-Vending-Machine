@@ -201,7 +201,7 @@ namespace myPOSDemoApp
                 case TransactionStatus.SuccessWithInfo:
                     success = true;
                     Console.WriteLine("GROSSE BROUETTE");
-                    serialPort1.WriteLine("42" + Environment.NewLine);
+                    serialPort1.WriteLine("5555" + Environment.NewLine);
 
                     break;
                 default:
@@ -1095,37 +1095,37 @@ namespace myPOSDemoApp
             txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.19")); // terrible but that's to trigger the event in the case of 2 consecutive items with the same price being requested
 
 
-            if (IncomingMessageTilde == "scarabblack")
+            if (IncomingMessageTilde == "0")
             {
                 newTildeMessage = true;
                 txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.01"));
             }
 
-            if (IncomingMessageTilde == "scarabblue")
+            if (IncomingMessageTilde == "1")
             {
                 newTildeMessage = true;
                 txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.02"));
             }
 
-            if (IncomingMessageTilde == "joulethief")
+            if (IncomingMessageTilde == "2")
             {
                 newTildeMessage = true;
                 txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.03"));
                // Console.WriteLine("DEBUG");
             }
 
-            if (IncomingMessageTilde == "hatsanta")
+            if (IncomingMessageTilde == "3")
             {
                 newTildeMessage = true;
                 txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.04"));
             }
 
-            if (IncomingMessageTilde == "hatstraw")
+            if (IncomingMessageTilde == "4")
             {
                 newTildeMessage = true;
                 txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.05"));
             }
-
+            /*
             if (IncomingMessageTilde == "hatwitch")
             {
                 newTildeMessage = true;
@@ -1136,7 +1136,7 @@ namespace myPOSDemoApp
             {
                 newTildeMessage = true;
                 txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.07"));
-            }
+            }*/
         }
 
         // Used the txt box to get around the thread error

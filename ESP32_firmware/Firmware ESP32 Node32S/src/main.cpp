@@ -134,6 +134,13 @@ void setup()
   pinMode(Relay5, OUTPUT);
   pinMode(Relay6, OUTPUT);
 
+  digitalWrite(Relay1, LOW);
+  digitalWrite(Relay2, LOW);
+  digitalWrite(Relay3, LOW);
+  digitalWrite(Relay4, LOW);
+  digitalWrite(Relay5, LOW);
+  digitalWrite(Relay6, LOW);
+
   Serial.begin(9600);
   aLastState = digitalRead(outputA);
 
@@ -148,7 +155,7 @@ void setup()
 
 void loop()
 {
-  if (YesNo == Yes)
+  /*if (YesNo == Yes)
   {
     digitalWrite(Relay1, HIGH);
     digitalWrite(Relay2, HIGH);
@@ -165,7 +172,7 @@ void loop()
     digitalWrite(Relay4, LOW);
     digitalWrite(Relay5, LOW);
     digitalWrite(Relay6, LOW);
-  }
+  }*/
 
   ReadRotaryEncoder();
 
@@ -191,11 +198,11 @@ void loop()
     //{
     switch (IncomingID)
     {
-      case PaymentReceivedID:
+    case PaymentReceivedID:
       Serial.println("PaymentReceivedID");
-      PaymentReceivedFlag = true;
+      if (State == AwaitingPayment)
+        PaymentReceivedFlag = true;
       break;
-
 
     case ScarabBlue:
       Serial.println("ScarabBlue");
@@ -290,7 +297,11 @@ void loop()
     if (RotaryEncoderButtonFlag == true)
     {
       if (YesNo == Yes)
-        State = AwaitingPayment;
+      {
+        //Serial.print("Item");
+        Serial.print(MenuSelection);
+      }
+      State = AwaitingPayment;
       if (YesNo == No)
         State = Selection;
       StateFlag = false;
@@ -308,7 +319,7 @@ void loop()
       MillisTimerState1 = millis();
       StateFlag = true;
     }
-    if (MillisTimerState1 + 5000 < millis())
+    if (MillisTimerState1 + 30000 < millis())
     {
       State = Error;
       InputChange = true;
@@ -320,13 +331,14 @@ void loop()
       PaymentReceivedFlag = false;
       InputChange = true;
       StateFlag = false;
-    }   
+    }
     break;
 
-      case Confirmation:
+  case Confirmation:
     if (StateFlag == false)
     {
       DisplayTextCentered("Thanks for your support!");
+      digitalWrite(Relay1, HIGH);
       MillisTimerState1 = millis();
       StateFlag = true;
     }
@@ -335,10 +347,11 @@ void loop()
       State = Selection;
       InputChange = true;
       StateFlag = false;
+      digitalWrite(Relay1, LOW);
     }
     break;
 
-      case Error:
+  case Error:
     if (StateFlag == false)
     {
       // DEBUG Serial.println("Welcome Screen Placeholder");
