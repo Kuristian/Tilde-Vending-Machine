@@ -178,13 +178,13 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtLog.BackColor = System.Drawing.SystemColors.Window;
-            this.txtLog.Location = new System.Drawing.Point(16, 522);
+            this.txtLog.Location = new System.Drawing.Point(16, 680);
             this.txtLog.Margin = new System.Windows.Forms.Padding(4);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLog.Size = new System.Drawing.Size(1837, 573);
+            this.txtLog.Size = new System.Drawing.Size(1837, 563);
             this.txtLog.TabIndex = 4;
             // 
             // btnAbort
@@ -1025,7 +1025,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(16, 1120);
+            this.label21.Location = new System.Drawing.Point(31, 537);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(153, 16);
             this.label21.TabIndex = 49;
@@ -1035,7 +1035,7 @@
             // cboPort
             // 
             this.cboPort.FormattingEnabled = true;
-            this.cboPort.Location = new System.Drawing.Point(19, 1140);
+            this.cboPort.Location = new System.Drawing.Point(34, 557);
             this.cboPort.Name = "cboPort";
             this.cboPort.Size = new System.Drawing.Size(150, 24);
             this.cboPort.TabIndex = 50;
@@ -1043,7 +1043,7 @@
             // 
             // btnOpen
             // 
-            this.btnOpen.Location = new System.Drawing.Point(176, 1112);
+            this.btnOpen.Location = new System.Drawing.Point(191, 529);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(75, 23);
             this.btnOpen.TabIndex = 51;
@@ -1053,7 +1053,7 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(176, 1140);
+            this.btnClose.Location = new System.Drawing.Point(191, 557);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 52;
@@ -1063,7 +1063,7 @@
             // 
             // txtSend
             // 
-            this.txtSend.Location = new System.Drawing.Point(341, 1112);
+            this.txtSend.Location = new System.Drawing.Point(356, 529);
             this.txtSend.Multiline = true;
             this.txtSend.Name = "txtSend";
             this.txtSend.Size = new System.Drawing.Size(298, 132);
@@ -1072,7 +1072,7 @@
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(646, 1112);
+            this.btnSend.Location = new System.Drawing.Point(661, 529);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
             this.btnSend.TabIndex = 54;
@@ -1082,7 +1082,7 @@
             // 
             // btnReceive
             // 
-            this.btnReceive.Location = new System.Drawing.Point(1082, 1112);
+            this.btnReceive.Location = new System.Drawing.Point(1097, 529);
             this.btnReceive.Name = "btnReceive";
             this.btnReceive.Size = new System.Drawing.Size(75, 23);
             this.btnReceive.TabIndex = 56;
@@ -1092,7 +1092,7 @@
             // 
             // txtReceive
             // 
-            this.txtReceive.Location = new System.Drawing.Point(777, 1112);
+            this.txtReceive.Location = new System.Drawing.Point(792, 529);
             this.txtReceive.Multiline = true;
             this.txtReceive.Name = "txtReceive";
             this.txtReceive.Size = new System.Drawing.Size(298, 132);
@@ -1105,7 +1105,7 @@
             // 
             // RefreshMicro
             // 
-            this.RefreshMicro.Location = new System.Drawing.Point(20, 1170);
+            this.RefreshMicro.Location = new System.Drawing.Point(35, 587);
             this.RefreshMicro.Name = "RefreshMicro";
             this.RefreshMicro.Size = new System.Drawing.Size(149, 41);
             this.RefreshMicro.TabIndex = 57;
@@ -1115,7 +1115,7 @@
             // 
             // txtMessageCount
             // 
-            this.txtMessageCount.Location = new System.Drawing.Point(646, 1170);
+            this.txtMessageCount.Location = new System.Drawing.Point(661, 587);
             this.txtMessageCount.Multiline = true;
             this.txtMessageCount.Name = "txtMessageCount";
             this.txtMessageCount.Size = new System.Drawing.Size(75, 74);
@@ -1124,7 +1124,7 @@
             // MessageCount
             // 
             this.MessageCount.AutoSize = true;
-            this.MessageCount.Location = new System.Drawing.Point(646, 1147);
+            this.MessageCount.Location = new System.Drawing.Point(661, 564);
             this.MessageCount.Name = "MessageCount";
             this.MessageCount.Size = new System.Drawing.Size(104, 16);
             this.MessageCount.TabIndex = 59;
