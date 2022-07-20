@@ -4,6 +4,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+#define PaymentReceivedID 5555
 #define ScarabBlue 1
 #define ScarabBlack 2
 #define JouleThief 3
@@ -14,18 +15,31 @@
 #define LittlePrinceRGB 8
 #define Patch 9
 
+#define Yes 0
+#define No 1
+
 #define sensitivity 6
 #define SelectionMenuOptions 5
 
-#define outputA 26                // 8
-#define outputB 27                // 7
-#define RotaryEncoderButtonPin 4 // 6
+#define outputA 26
+#define outputB 27
+#define RotaryEncoderButtonPin 4
+#define Relay1 17
+#define Relay2 16
+#define Relay3 12
+#define Relay4 15
+#define Relay5 02
+#define Relay6 00
+
+#define SoftwareDebounce 100 // Delay of 100ms between presses
 
 #define Welcome 1
 #define Selection 2
 #define Check 3
-#define Confirmation 4
-#define Error 5
+#define AwaitingPayment 4
+#define Confirmation 5
+#define Error 6
+#define Timeout 7
 
 #define OriginXSelection 6  // Top left
 #define OriginYSelection 50 // Top left
@@ -77,23 +91,12 @@ static const unsigned char PROGMEM logo_bmp[] =
      0b01110000, 0b01110000,
      0b00000000, 0b00110000};
 
-/*void testdrawline(void);      // Draw many lines
-void testfillrect(void);      // Draw rectangles (filled)
-void testdrawcircle(void);    // Draw circles (outlines)
-void testfillcircle(void);    // Draw circles (filled)
-void testdrawroundrect(void); // Draw rounded rectangles (outlines)
-void testfillroundrect(void); // Draw rounded rectangles (filled)
-void testdrawtriangle(void);  // Draw triangles (outlines)
-void testfilltriangle(void);  // Draw triangles (filled)
-void testdrawchar(void);      // Draw characters of the default font
-void testdrawstyles(void);    // Draw 'stylized' characters
-void testscrolltext(void);    // Draw scrolling text
-void testdrawbitmap(void);    // Draw a small bitmap image
-void testdrawrect(void);      // Draw rectangles (outlines)
-void testanimate(const uint8_t *bitmap, uint8_t w, uint8_t h);*/
 // ADAFRUIT DECLARATION END
 void ReadRotaryEncoder(void);
 void DisplayTextCentered(String TextToDisplay);
+void DisplaySelectionMenu(void);
+void DisplayCheck(void);
+void DisplayItems(void);
 
 int IncomingID = 0;
 unsigned long CurrentMillisCycle = 0;
@@ -104,14 +107,17 @@ int counter = 0;
 int aState;
 int aLastState;
 int CursorRotaryEncoder = 0;
+unsigned long RotaryEncoderButtonDebounce = 0;
 bool RotaryEncoderButtonPressed = false; // used to raise/lower the flag
 bool RotaryEncoderButtonFlag = false;    // to use in event
 
-bool StateFlag = false; // 0 means it has not been in the state yet, to run initialisation code for each state, should be cleared after
+bool StateFlag = false; // 0 means it has not been in the state yet, to run initialisation code for each state, should be cleared after, right now redundant with the InputChange flag
 int State = 0;
 unsigned long MillisTimerState1 = 0;
 bool InputChange = false;
-int MenuSelection = 0;
+int MenuSelection = 0; // used to select the item and is kept in memory
+int YesNo = 0;
+bool PaymentReceivedFlag = false;
 
 int ItemsPrice[5] = {15, 10, 20, 8, 25};
 // char *ItemsNames[] = {"Scarabs/Tyrannopixelus Rex", "Coffee Beans pins", "Little Prince pins", "Patch", "Joule Thief Cat"};
@@ -120,7 +126,13 @@ void setup()
 {
   pinMode(outputA, INPUT);
   pinMode(outputB, INPUT);
-    pinMode(RotaryEncoderButtonPin, INPUT);
+  pinMode(RotaryEncoderButtonPin, INPUT);
+  pinMode(Relay1, OUTPUT);
+  pinMode(Relay2, OUTPUT);
+  pinMode(Relay3, OUTPUT);
+  pinMode(Relay4, OUTPUT);
+  pinMode(Relay5, OUTPUT);
+  pinMode(Relay6, OUTPUT);
 
   Serial.begin(9600);
   aLastState = digitalRead(outputA);
@@ -136,15 +148,34 @@ void setup()
 
 void loop()
 {
+  if (YesNo == Yes)
+  {
+    digitalWrite(Relay1, HIGH);
+    digitalWrite(Relay2, HIGH);
+    digitalWrite(Relay3, HIGH);
+    digitalWrite(Relay4, HIGH);
+    digitalWrite(Relay5, HIGH);
+    digitalWrite(Relay6, HIGH);
+  }
+  if (YesNo == No)
+  {
+    digitalWrite(Relay1, LOW);
+    digitalWrite(Relay2, LOW);
+    digitalWrite(Relay3, LOW);
+    digitalWrite(Relay4, LOW);
+    digitalWrite(Relay5, LOW);
+    digitalWrite(Relay6, LOW);
+  }
+
   ReadRotaryEncoder();
 
   CurrentMillisCycle = millis();
   if ((CurrentMillisCycle % 1000) == 0 && LastMillisSecond != CurrentMillisCycle)
   {
-    Serial.print("Cycle: ");
-    Serial.println(CyclesSecond);
-    Serial.print("millis: ");
-    Serial.println(CurrentMillisCycle);
+    // DEBUG Serial.print("Cycle: ");
+    // DEBUG Serial.println(CyclesSecond);
+    // DEBUG Serial.print("millis: ");
+    // DEBUG Serial.println(CurrentMillisCycle);
     CyclesSecond++;
     LastMillisSecond = CurrentMillisCycle;
     // every 1 second
@@ -160,6 +191,12 @@ void loop()
     //{
     switch (IncomingID)
     {
+      case PaymentReceivedID:
+      Serial.println("PaymentReceivedID");
+      PaymentReceivedFlag = true;
+      break;
+
+
     case ScarabBlue:
       Serial.println("ScarabBlue");
       DisplayTextCentered("ScarabBlue");
@@ -187,7 +224,7 @@ void loop()
   case Welcome:
     if (StateFlag == false)
     {
-      Serial.println("Welcome Screen Placeholder");
+      // DEBUG Serial.println("Welcome Screen Placeholder");
       DisplayTextCentered("Welcome Screen Placeholder");
       MillisTimerState1 = millis();
       StateFlag = true;
@@ -203,173 +240,118 @@ void loop()
   case Selection:
     if (StateFlag == false || InputChange == true)
     {
-     /* if (RotaryEncoderButtonFlag == 1)
-      {
-        State = Check;
-        InputChange = true;
-        StateFlag = false;
-        RotaryEncoderButtonFlag = false;
-      }*/
+
+      //  over/underflow the rotary encoder
       if (CursorRotaryEncoder < 0)
         CursorRotaryEncoder = SelectionMenuOptions * sensitivity - 1;
       if (CursorRotaryEncoder >= SelectionMenuOptions * sensitivity)
         CursorRotaryEncoder = 0;
 
+      // Sets Menu Selection
       int tempMenuSelection = MenuSelection;
       MenuSelection = CursorRotaryEncoder / sensitivity;
 
       if (MenuSelection != tempMenuSelection || StateFlag == false)
       {
-        // Select an item
-        display.clearDisplay();
-        display.setTextSize(1);
-        display.setTextColor(SSD1306_WHITE);
-        display.setCursor(20, 3);
-        display.println("Select an item");
-        Serial.println("Selection Screen");
-        // Boxes at the bottom
-        display.drawRect(OriginXSelection, OriginYSelection, WidthSelectionBox, HeightSelectionBox, SSD1306_WHITE);
-        display.drawRect(OriginXSelection + GapXSelectionBox, OriginYSelection, WidthSelectionBox, HeightSelectionBox, SSD1306_WHITE);
-        display.drawRect(OriginXSelection + GapXSelectionBox * 2, OriginYSelection, WidthSelectionBox, HeightSelectionBox, SSD1306_WHITE);
-        display.drawRect(OriginXSelection + GapXSelectionBox * 3, OriginYSelection, WidthSelectionBox, HeightSelectionBox, SSD1306_WHITE);
-        display.drawRect(OriginXSelection + GapXSelectionBox * 4, OriginYSelection, WidthSelectionBox + GapXSelectionBox, HeightSelectionBox, SSD1306_WHITE);
-        if (MenuSelection == (SelectionMenuOptions - 1))
-        {
-          display.fillRect(OriginXSelection + GapXSelectionBox * 4, OriginYSelection, WidthSelectionBox + GapXSelectionBox, HeightSelectionBox, SSD1306_WHITE);
-        }
-        else
-        {
-          display.fillRect(OriginXSelection + GapXSelectionBox * (MenuSelection), OriginYSelection, WidthSelectionBox, HeightSelectionBox, SSD1306_WHITE);
-        }
-
-        switch (MenuSelection)
-        {
-        case 0:
-          display.setTextSize(1);
-          display.setTextColor(SSD1306_WHITE);
-          display.setCursor(20, 20);
-          display.println("Cyber Scarab or");
-          display.setCursor(10, 30);
-          display.println("Tyrannopixelus Rex");
-          display.setCursor(45, 40);
-          display.println("15 euros");
-          break;
-
-        case 1:
-          display.setTextSize(1);
-          display.setTextColor(SSD1306_WHITE);
-          display.setCursor(20, 20);
-          display.println("Coffee Beans pins");
-          // display.setCursor(10, 30);
-          // display.println("Tyrannopixelus Rex");
-          display.setCursor(45, 40);
-          display.println("10 euros");
-          break;
-
-        case 2:
-          display.setTextSize(1);
-          display.setTextColor(SSD1306_WHITE);
-          display.setCursor(20, 20);
-          display.println("Little Prince pins");
-          // display.setCursor(10, 30);
-          // display.println("Tyrannopixelus Rex");
-          display.setCursor(45, 40);
-          display.println("20 euros");
-          break;
-
-        case 3:
-          display.setTextSize(1);
-          display.setTextColor(SSD1306_WHITE);
-          display.setCursor(20, 20);
-          display.println("Patch TBD");
-          // display.setCursor(10, 30);
-          // display.println("Tyrannopixelus Rex");
-          display.setCursor(45, 40);
-          display.println("8 euros");
-          break;
-
-        case 4:
-          display.setTextSize(1);
-          display.setTextColor(SSD1306_WHITE);
-          display.setCursor(20, 20);
-          display.println("Joule Thief Cat");
-          // display.setCursor(10, 30);
-          // display.println("Tyrannopixelus Rex");
-          display.setCursor(45, 40);
-          display.println("25 euros");
-          break;
-        }
-        display.display();
+        DisplaySelectionMenu();
       }
-      InputChange = false;
-      StateFlag = true;
     }
-
+    InputChange = false;
+    if (RotaryEncoderButtonFlag == true)
+    {
+      State = Check;
+      StateFlag = false;
+      InputChange = false;
+      RotaryEncoderButtonFlag = false;
+    }
+    else
+      StateFlag = true; // Set the first time flag if it is not the condition to exit
     break;
 
   case Check:
-    DisplayTextCentered("Poulet");
-      if (InputChange == true&& RotaryEncoderButtonFlag == true) 
-      {State = Welcome;
-      RotaryEncoderButtonFlag = false;
-      InputChange = false;
-      }
-
-   /* if (StateFlag == false || InputChange == true)
+    if (StateFlag == false || InputChange == true)
     {
-      display.setTextSize(1);
-      display.setTextColor(SSD1306_WHITE);
-      display.setCursor(20, 20);
-      display.println("Confirm selection of");
-      switch (MenuSelection)
+      //  over/underflow the rotary encoder
+      if (CursorRotaryEncoder < 0)
+        CursorRotaryEncoder = 2 * sensitivity - 1;
+      if (CursorRotaryEncoder >= 2 * sensitivity)
+        CursorRotaryEncoder = 0;
+
+      // Sets Menu Selection
+      int tempYesNo = YesNo;
+      YesNo = CursorRotaryEncoder / sensitivity;
+
+      if (YesNo != tempYesNo || StateFlag == false)
       {
-      case 0:
-        display.setCursor(10, 30);
-        display.println("Tyrannopixelus Rex");
-        break;
-
-      case 1:
-        display.setCursor(10, 30);
-        display.println("Coffee Beans pins");
-        break;
-
-      case 2:
-        display.setTextSize(1);
-        display.setTextColor(SSD1306_WHITE);
-        display.setCursor(20, 20);
-        display.println("Little Prince pins");
-        // display.setCursor(10, 30);
-        // display.println("Tyrannopixelus Rex");
-        display.setCursor(45, 40);
-        display.println("20 euros");
-        break;
-
-      case 3:
-        display.setTextSize(1);
-        display.setTextColor(SSD1306_WHITE);
-        display.setCursor(20, 20);
-        display.println("Patch TBD");
-        // display.setCursor(10, 30);
-        // display.println("Tyrannopixelus Rex");
-        display.setCursor(45, 40);
-        display.println("8 euros");
-        break;
-
-      case 4:
-        display.setTextSize(1);
-        display.setTextColor(SSD1306_WHITE);
-        display.setCursor(20, 20);
-        display.println("Joule Thief Cat");
-        // display.setCursor(10, 30);
-        // display.println("Tyrannopixelus Rex");
-        display.setCursor(45, 40);
-        display.println("25 euros");
-        break;
+        DisplayCheck();
       }
-      display.display();
+    }
+    InputChange = false;
+    if (RotaryEncoderButtonFlag == true)
+    {
+      if (YesNo == Yes)
+        State = AwaitingPayment;
+      if (YesNo == No)
+        State = Selection;
+      StateFlag = false;
       InputChange = false;
+      RotaryEncoderButtonFlag = false;
+    }
+    else
+      StateFlag = true; // Set the first time flag if it is not the condition to exit
+    break;
+
+  case AwaitingPayment:
+    if (StateFlag == false)
+    {
+      DisplayTextCentered("Awaiting Payment");
+      MillisTimerState1 = millis();
       StateFlag = true;
-    }*/
+    }
+    if (MillisTimerState1 + 5000 < millis())
+    {
+      State = Error;
+      InputChange = true;
+      StateFlag = false;
+    }
+    if (PaymentReceivedFlag == true)
+    {
+      State = Confirmation;
+      PaymentReceivedFlag = false;
+      InputChange = true;
+      StateFlag = false;
+    }   
+    break;
+
+      case Confirmation:
+    if (StateFlag == false)
+    {
+      DisplayTextCentered("Thanks for your support!");
+      MillisTimerState1 = millis();
+      StateFlag = true;
+    }
+    if (MillisTimerState1 + 1500 < millis())
+    {
+      State = Selection;
+      InputChange = true;
+      StateFlag = false;
+    }
+    break;
+
+      case Error:
+    if (StateFlag == false)
+    {
+      // DEBUG Serial.println("Welcome Screen Placeholder");
+      DisplayTextCentered("Error");
+      MillisTimerState1 = millis();
+      StateFlag = true;
+    }
+    if (MillisTimerState1 + 1500 < millis())
+    {
+      State = Selection;
+      InputChange = true;
+      StateFlag = false;
+    }
     break;
 
   default:
@@ -377,16 +359,11 @@ void loop()
   }
 }
 
-/**************************************************************************/
-/*!
-   @brief   Draw a rectangle with no fill color
-    @param    x   Top left corner x coordinate
-    @param    y   Top left corner y coordinate
-    @param    w   Width in pixels
-    @param    h   Height in pixels
-    @param    color 16-bit 5-6-5 Color to draw with
-*/
-/**************************************************************************/
+//
+//
+// END OF MAIN LOOP
+//
+//
 
 void ReadRotaryEncoder(void)
 {
@@ -400,8 +377,15 @@ void ReadRotaryEncoder(void)
     }
     else // high to low / released to pressed
     {
-      Serial.print("Button pressed");
-      RotaryEncoderButtonFlag = true;
+      // DEBUG Serial.println("Button pressed");
+      if (millis() > RotaryEncoderButtonDebounce + SoftwareDebounce)
+      {
+        RotaryEncoderButtonFlag = true;
+        RotaryEncoderButtonDebounce = millis();
+        // DEBUG Serial.println("Debounced Button pressed");
+        InputChange = true;
+      }
+
       RotaryEncoderButtonPressed = true;
     }
   }
@@ -422,10 +406,10 @@ void ReadRotaryEncoder(void)
       counter--;
       CursorRotaryEncoder--;
     }
-    Serial.print("Position: ");
-    Serial.println(counter);
-    Serial.print("CursorRotaryEncoder: ");
-    Serial.println(CursorRotaryEncoder);
+    // DEBUG Serial.print("Position: ");
+    // DEBUG Serial.println(counter);
+    // DEBUG Serial.print("CursorRotaryEncoder: ");
+    // DEBUG Serial.println(CursorRotaryEncoder);
     InputChange = true;
   }
   aLastState = aState; // Updates the previous state of the outputA with the current state
@@ -444,6 +428,129 @@ void DisplayTextCentered(String TextToDisplay)
 //
 //
 //
+// Display functions
+//
+//
+//
+
+void DisplaySelectionMenu(void)
+{
+  // Select an item
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(20, 3);
+  display.println("Select an item");
+  // DEBUG Serial.println("Selection Screen");
+  // Boxes at the bottom
+  display.drawRect(OriginXSelection, OriginYSelection, WidthSelectionBox, HeightSelectionBox, SSD1306_WHITE);
+  display.drawRect(OriginXSelection + GapXSelectionBox, OriginYSelection, WidthSelectionBox, HeightSelectionBox, SSD1306_WHITE);
+  display.drawRect(OriginXSelection + GapXSelectionBox * 2, OriginYSelection, WidthSelectionBox, HeightSelectionBox, SSD1306_WHITE);
+  display.drawRect(OriginXSelection + GapXSelectionBox * 3, OriginYSelection, WidthSelectionBox, HeightSelectionBox, SSD1306_WHITE);
+  display.drawRect(OriginXSelection + GapXSelectionBox * 4, OriginYSelection, WidthSelectionBox + GapXSelectionBox, HeightSelectionBox, SSD1306_WHITE);
+  if (MenuSelection == (SelectionMenuOptions - 1))
+  {
+    display.fillRect(OriginXSelection + GapXSelectionBox * 4, OriginYSelection, WidthSelectionBox + GapXSelectionBox, HeightSelectionBox, SSD1306_WHITE);
+  }
+  else
+  {
+    display.fillRect(OriginXSelection + GapXSelectionBox * (MenuSelection), OriginYSelection, WidthSelectionBox, HeightSelectionBox, SSD1306_WHITE);
+  }
+  DisplayItems();
+  display.display();
+}
+
+void DisplayCheck(void)
+{
+  // Select an item
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(3, 3);
+  display.println("Confirm selection of");
+  // DEBUG Serial.println("Confirm selection of");
+  // Boxes at the bottom
+
+  if (YesNo == Yes)
+  {
+    display.fillRect(OriginXSelection + GapXSelectionBox * 2 - 3, OriginYSelection, WidthSelectionBox + 3, HeightSelectionBox + 1, SSD1306_WHITE);
+    display.drawRect(OriginXSelection + GapXSelectionBox * 3, OriginYSelection, WidthSelectionBox + 3, HeightSelectionBox + 1, SSD1306_WHITE);
+    display.setTextColor(SSD1306_BLACK);
+    display.setCursor(45, 52);
+    display.println("Yes");
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(71, 52);
+    display.println("No");
+  }
+  if (YesNo == No)
+  {
+    display.drawRect(OriginXSelection + GapXSelectionBox * 2 - 3, OriginYSelection, WidthSelectionBox + 3, HeightSelectionBox + 1, SSD1306_WHITE);
+    display.fillRect(OriginXSelection + GapXSelectionBox * 3, OriginYSelection, WidthSelectionBox + 3, HeightSelectionBox + 1, SSD1306_WHITE);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(45, 52);
+    display.println("Yes");
+    display.setTextColor(SSD1306_BLACK);
+    display.setCursor(71, 52);
+    display.println("No");
+  }
+  DisplayItems();
+  display.display();
+}
+
+void DisplayItems(void)
+{
+  switch (MenuSelection)
+  {
+  case 0:
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(20, 20);
+    display.println("Cyber Scarab or");
+    display.setCursor(10, 30);
+    display.println("Tyrannopixelus Rex");
+    display.setCursor(45, 40);
+    display.println("15 euros");
+    break;
+
+  case 1:
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(13, 20);
+    display.println("Coffee Beans pins");
+    display.setCursor(45, 40);
+    display.println("10 euros");
+    break;
+
+  case 2:
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(10, 20);
+    display.println("Little Prince pins");
+    display.setCursor(45, 40);
+    display.println("20 euros");
+    break;
+
+  case 3:
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(50, 20);
+    display.println("Patch");
+    display.setCursor(45, 40);
+    display.println("8 euros");
+    break;
+
+  case 4:
+    display.setTextSize(1);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(20, 20);
+    display.println("Joule Thief Cat");
+    display.setCursor(45, 40);
+    display.println("25 euros");
+
+    break;
+  }
+}
+
 // ADAFRUIT ANIMATION
 // Show initial display buffer contents on the screen --
 // the library initializes this with an Adafruit splash screen.
