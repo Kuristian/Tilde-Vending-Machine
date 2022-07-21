@@ -23,10 +23,11 @@
 
 #define outputA 26
 #define outputB 27
-#define RotaryEncoderButtonPin 4
+#define RotaryEncoderButtonPin 12
+#define PowerEncoder 21
 #define Relay1 17
 #define Relay2 16
-#define Relay3 12
+#define Relay3 4
 #define Relay4 15
 #define Relay5 02
 #define Relay6 00
@@ -133,6 +134,7 @@ void setup()
   pinMode(Relay4, OUTPUT);
   pinMode(Relay5, OUTPUT);
   pinMode(Relay6, OUTPUT);
+  pinMode(PowerEncoder, OUTPUT);
 
   digitalWrite(Relay1, LOW);
   digitalWrite(Relay2, LOW);
@@ -140,6 +142,7 @@ void setup()
   digitalWrite(Relay4, LOW);
   digitalWrite(Relay5, LOW);
   digitalWrite(Relay6, LOW);
+  digitalWrite(PowerEncoder, LOW);
 
   Serial.begin(9600);
   aLastState = digitalRead(outputA);
@@ -238,6 +241,7 @@ void loop()
     }
     if (MillisTimerState1 + 1500 < millis())
     {
+      digitalWrite(PowerEncoder, HIGH);
       State = Selection;
       InputChange = true;
       StateFlag = false;
