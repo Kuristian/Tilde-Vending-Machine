@@ -209,7 +209,7 @@ namespace myPOSDemoApp
                     break;
             }
             ///////
-            //MessageBox.Show(sb.ToString()); // Tilde remove the pop up window
+            ////MessageBox.Show(sb.ToString()); // Tilde remove the pop up window
         }
 
         public static async Task WriteToFile(string text)
@@ -389,7 +389,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    ////MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -405,7 +405,7 @@ namespace myPOSDemoApp
         {
             if (!ParseAmount() || !ParseCurrency())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -416,7 +416,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        ////MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -427,7 +427,7 @@ namespace myPOSDemoApp
         {
             if (!ParseAmount() || !ParseCurrency())
             {
-                MessageBox.Show("Invalid input");
+                ////MessageBox.Show("Invalid input");
             }
             else
             {
@@ -438,7 +438,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -453,7 +453,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -468,7 +468,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -482,7 +482,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -496,7 +496,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -510,7 +510,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -530,7 +530,7 @@ namespace myPOSDemoApp
         {
             if (!ParseAmount() || !ParseCurrency())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -540,7 +540,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -551,7 +551,7 @@ namespace myPOSDemoApp
         {
             if (!ParseAmount() || !ParsePreauthCode())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -561,7 +561,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -572,7 +572,7 @@ namespace myPOSDemoApp
         {
             if (!ParsePreauthCode())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -582,7 +582,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -593,7 +593,7 @@ namespace myPOSDemoApp
         {
             if (!ParseAmount() || !ParseCurrency() || !ParseMoTo())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -604,7 +604,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -615,7 +615,7 @@ namespace myPOSDemoApp
         {
             if (!ParseAmount() || !ParseCurrency() || !ParseMoTo())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -626,7 +626,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -637,7 +637,7 @@ namespace myPOSDemoApp
         {
             if (!ParseAmount() || !ParseCurrency() || !ParseMoTo())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -648,7 +648,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -663,7 +663,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -677,7 +677,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -687,7 +687,7 @@ namespace myPOSDemoApp
         {
             if (!ParseAmount() || !ParseCurrency())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -697,7 +697,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -712,7 +712,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -726,7 +726,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -740,7 +740,7 @@ namespace myPOSDemoApp
 
             if (!ParseAmount() || !ParseCurrency())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -750,7 +750,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -769,7 +769,7 @@ namespace myPOSDemoApp
 
             if (!ParseAmount() || !ParseCurrency())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -779,7 +779,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -799,7 +799,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -809,7 +809,7 @@ namespace myPOSDemoApp
         {
             if (!ParseAmount() || !ParseCurrency())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -819,7 +819,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -834,7 +834,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -844,7 +844,7 @@ namespace myPOSDemoApp
         {
             if (!ParseAmount() || !ParseCurrency())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -854,7 +854,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -869,7 +869,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -880,7 +880,7 @@ namespace myPOSDemoApp
 
             if (!ParseAmount() || !ParseCurrency())
             {
-                MessageBox.Show("Invalid input");
+                //MessageBox.Show("Invalid input");
             }
             else
             {
@@ -890,7 +890,7 @@ namespace myPOSDemoApp
                     case RequestResult.Busy:
                     case RequestResult.InvalidParams:
                     case RequestResult.NotInitialized:
-                        MessageBox.Show("RequestResult: " + r.ToString());
+                        //MessageBox.Show("RequestResult: " + r.ToString());
                         break;
                     default: break;
                 }
@@ -905,7 +905,7 @@ namespace myPOSDemoApp
                 case RequestResult.Busy:
                 case RequestResult.InvalidParams:
                 case RequestResult.NotInitialized:
-                    MessageBox.Show("RequestResult: " + r.ToString());
+                    //MessageBox.Show("RequestResult: " + r.ToString());
                     break;
                 default: break;
             }
@@ -952,7 +952,7 @@ namespace myPOSDemoApp
 				case RequestResult.Busy:
 				case RequestResult.InvalidParams:
 				case RequestResult.NotInitialized:
-					MessageBox.Show("RequestResult: " + r.ToString());
+					//MessageBox.Show("RequestResult: " + r.ToString());
 					break;
 				default: break;
 			}
@@ -962,7 +962,7 @@ namespace myPOSDemoApp
 		{
 			if (!ParseAmount() || !ParseCurrency())
 			{
-				MessageBox.Show("Invalid input");
+				//MessageBox.Show("Invalid input");
 			}
 			else
 			{
@@ -973,7 +973,7 @@ namespace myPOSDemoApp
 					case RequestResult.Busy:
 					case RequestResult.InvalidParams:
 					case RequestResult.NotInitialized:
-						MessageBox.Show("RequestResult: " + r.ToString());
+						//MessageBox.Show("RequestResult: " + r.ToString());
 						break;
 					default: break;
 				}
@@ -1020,7 +1020,7 @@ namespace myPOSDemoApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1051,7 +1051,7 @@ namespace myPOSDemoApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1070,7 +1070,7 @@ namespace myPOSDemoApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show(ex.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         
@@ -1098,32 +1098,32 @@ namespace myPOSDemoApp
             if (IncomingMessageTilde == "0")
             {
                 newTildeMessage = true;
-                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "12"));
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.03"));//12
             }
 
             if (IncomingMessageTilde == "1")
             {
                 newTildeMessage = true;
-                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "10"));
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.03"));//10
             }
 
             if (IncomingMessageTilde == "2")
             {
                 newTildeMessage = true;
-                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "5"));
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.03"));//5
                // Console.WriteLine("DEBUG");
             }
 
             if (IncomingMessageTilde == "3")
             {
                 newTildeMessage = true;
-                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "8"));
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.03"));//8
             }
 
             if (IncomingMessageTilde == "4")
             {
                 newTildeMessage = true;
-                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "20"));
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.03"));//20
             }
             /*
             if (IncomingMessageTilde == "hatwitch")
