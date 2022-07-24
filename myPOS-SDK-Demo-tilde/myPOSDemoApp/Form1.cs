@@ -1098,32 +1098,32 @@ namespace myPOSDemoApp
             if (IncomingMessageTilde == "0")
             {
                 newTildeMessage = true;
-                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.01"));
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "12"));
             }
 
             if (IncomingMessageTilde == "1")
             {
                 newTildeMessage = true;
-                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.02"));
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "10"));
             }
 
             if (IncomingMessageTilde == "2")
             {
                 newTildeMessage = true;
-                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.03"));
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "5"));
                // Console.WriteLine("DEBUG");
             }
 
             if (IncomingMessageTilde == "3")
             {
                 newTildeMessage = true;
-                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.04"));
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "8"));
             }
 
             if (IncomingMessageTilde == "4")
             {
                 newTildeMessage = true;
-                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "0.05"));
+                txtAmount.Invoke((MethodInvoker)(() => txtAmount.Text = "20"));
             }
             /*
             if (IncomingMessageTilde == "hatwitch")

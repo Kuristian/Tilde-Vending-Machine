@@ -5,15 +5,7 @@
 #include <Adafruit_SSD1306.h>
 
 #define PaymentReceivedID 5555
-#define ScarabBlue 1
-#define ScarabBlack 2
-#define JouleThief 3
-#define Butterfly 4
-#define Kex 5
-#define CoffeePins 6
-#define LittlePrinceYellow 7
-#define LittlePrinceRGB 8
-#define Patch 9
+#define UserTimeout 5
 
 #define Yes 0
 #define No 1
@@ -25,12 +17,12 @@
 #define outputB 27
 #define RotaryEncoderButtonPin 12
 #define PowerEncoder 21
-#define Relay1 17
-#define Relay2 16
+#define Relay1 2
+#define Relay2 0
 #define Relay3 4
-#define Relay4 15
-#define Relay5 02
-#define Relay6 00
+#define Relay4 16
+#define Relay5 17
+#define Relay6 15
 
 #define SoftwareDebounce 100 // Delay of 100ms between presses
 
@@ -41,6 +33,12 @@
 #define Confirmation 5
 #define Error 6
 #define Timeout 7
+#define CardDeclined 8
+
+#define WelcomeScreenDuration 3000
+#define AwaitingPaymentDuration 30000
+#define PickupItemDuration 30000
+#define AwaitingPaymentAnimationDuration 100
 
 #define OriginXSelection 6  // Top left
 #define OriginYSelection 50 // Top left
@@ -72,32 +70,75 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
 
 #define NUMFLAKES 10 // Number of snowflakes in the animation example
 
-#define LOGO_HEIGHT 16
-#define LOGO_WIDTH 16
+#define LOGO_HEIGHT 25
+#define LOGO_WIDTH 32
 static const unsigned char PROGMEM logo_bmp[] =
-    {0b00000000, 0b11000000,
-     0b00000001, 0b11000000,
-     0b00000001, 0b11000000,
-     0b00000011, 0b11100000,
-     0b11110011, 0b11100000,
-     0b11111110, 0b11111000,
-     0b01111110, 0b11111111,
-     0b00110011, 0b10011111,
-     0b00011111, 0b11111100,
-     0b00001101, 0b01110000,
-     0b00011011, 0b10100000,
-     0b00111111, 0b11100000,
-     0b00111111, 0b11110000,
-     0b01111100, 0b11110000,
-     0b01110000, 0b01110000,
-     0b00000000, 0b00110000};
+    {0b11111111, 0b00000000,0b00000000, 0b11111111,
+     0b11111111, 0b00000000,0b00000000, 0b11111111,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00011100,0b00000000, 0b00000011,
+     0b11000000, 0b00111110,0b00000000, 0b00000011,
+     0b11000000, 0b01100011,0b00000011, 0b00000011,
+     0b11000000, 0b11000001,0b10000011, 0b00000011,// 
+     0b11000000, 0b11000000,0b11000110, 0b00000011,
+     0b11000000, 0b00000000,0b01111100, 0b00000011,
+     0b11000000, 0b00000000,0b00111000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11000000, 0b00000000,0b00000000, 0b00000011,
+     0b11111111, 0b00000000,0b00000000, 0b11111111,
+     0b11111111, 0b00000000,0b00000000, 0b11111111,};
+     /*
+     static const unsigned char PROGMEM logo_bmp[] =
+    {0b11111111, 0b00000000,0b00000000, 0b11111111,
+     0b11111111, 0b00000000,0b00000000, 0b11111111,
+     0b11111111, 0b00000000,0b00000000, 0b11111111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11100000, 0b00111100,0b00000000, 0b00000111,
+     0b11100000, 0b11111111,0b00000000, 0b00000111,
+     0b11100000, 0b11111111,0b00000000, 0b00000111,
+     0b11100000, 0b11000011,0b11000011, 0b00000111,// 
+     0b11100000, 0b00000000,0b11111111, 0b00000111,
+     0b11100000, 0b00000000,0b11111111, 0b00000111,
+     0b11100000, 0b00000000,0b00111100, 0b00000111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11100000, 0b00000000,0b00000000, 0b00000111,
+     0b11111111, 0b00000000,0b00000000, 0b11111111,
+     0b11111111, 0b00000000,0b00000000, 0b11111111,
+     0b11111111, 0b00000000,0b00000000, 0b11111111,};
+*/
 
 // ADAFRUIT DECLARATION END
 void ReadRotaryEncoder(void);
 void DisplayTextCentered(String TextToDisplay);
+void DisplayTextCenteredY(String TextToDisplay, int XCoordinate);
 void DisplaySelectionMenu(void);
 void DisplayCheck(void);
 void DisplayItems(void);
+void DisplayWelcomeTilde(void);
+void DisplayAwaitingPayment(void);
+void DisplayConfirmation(void);
+void DisplayError(void);
+void DisplayTimeout(void);
 
 int IncomingID = 0;
 unsigned long CurrentMillisCycle = 0;
@@ -115,6 +156,8 @@ bool RotaryEncoderButtonFlag = false;    // to use in event
 bool StateFlag = false; // 0 means it has not been in the state yet, to run initialisation code for each state, should be cleared after, right now redundant with the InputChange flag
 int State = 0;
 unsigned long MillisTimerState1 = 0;
+unsigned long MillisTimerAnimation1 = 0;
+int StateAnimation = 0;
 bool InputChange = false;
 int MenuSelection = 0; // used to select the item and is kept in memory
 int YesNo = 0;
@@ -136,12 +179,6 @@ void setup()
   pinMode(Relay6, OUTPUT);
   pinMode(PowerEncoder, OUTPUT);
 
-  digitalWrite(Relay1, LOW);
-  digitalWrite(Relay2, LOW);
-  digitalWrite(Relay3, LOW);
-  digitalWrite(Relay4, LOW);
-  digitalWrite(Relay5, LOW);
-  digitalWrite(Relay6, LOW);
   digitalWrite(PowerEncoder, LOW);
 
   Serial.begin(9600);
@@ -179,6 +216,8 @@ void loop()
 
   ReadRotaryEncoder();
 
+
+  // to remove not used
   CurrentMillisCycle = millis();
   if ((CurrentMillisCycle % 1000) == 0 && LastMillisSecond != CurrentMillisCycle)
   {
@@ -207,21 +246,6 @@ void loop()
         PaymentReceivedFlag = true;
       break;
 
-    case ScarabBlue:
-      Serial.println("ScarabBlue");
-      DisplayTextCentered("ScarabBlue");
-      break;
-
-    case ScarabBlack:
-      Serial.println("ScarabBlack");
-      DisplayTextCentered("ScarabBlack");
-      break;
-
-    case JouleThief:
-      Serial.println("JouleThief");
-      DisplayTextCentered("JouleThief");
-      break;
-
     default:
       Serial.println("Not defined");
     }
@@ -235,15 +259,23 @@ void loop()
     if (StateFlag == false)
     {
       // DEBUG Serial.println("Welcome Screen Placeholder");
-      DisplayTextCentered("Welcome Screen Placeholder");
+DisplayWelcomeTilde();
+      digitalWrite(PowerEncoder, HIGH);
       MillisTimerState1 = millis();
       StateFlag = true;
+
+        digitalWrite(Relay1, HIGH);
+  digitalWrite(Relay2, HIGH);
+  digitalWrite(Relay3, HIGH);
+  digitalWrite(Relay4, HIGH);
+  digitalWrite(Relay5, HIGH);
+  digitalWrite(Relay6, HIGH);
     }
-    if (MillisTimerState1 + 1500 < millis())
+    if (MillisTimerState1 + WelcomeScreenDuration < millis())
     {
-      digitalWrite(PowerEncoder, HIGH);
       State = Selection;
       InputChange = true;
+      RotaryEncoderButtonFlag = false; //clear the button flag that sets accidentally on boot
       StateFlag = false;
     }
     break;
@@ -261,6 +293,17 @@ void loop()
       // Sets Menu Selection
       int tempMenuSelection = MenuSelection;
       MenuSelection = CursorRotaryEncoder / sensitivity;
+/*
+if (MenuSelection == 0)    digitalWrite(Relay1, LOW);
+else digitalWrite(Relay1, HIGH);
+if (MenuSelection == 1)    digitalWrite(Relay2, LOW);
+else digitalWrite(Relay2, HIGH);
+if (MenuSelection == 2)    digitalWrite(Relay3, LOW);
+else digitalWrite(Relay3, HIGH);
+if (MenuSelection == 3)    digitalWrite(Relay4, LOW);
+else digitalWrite(Relay4, HIGH);
+if (MenuSelection == 4)    digitalWrite(Relay5, LOW);
+else digitalWrite(Relay5, HIGH);*/
 
       if (MenuSelection != tempMenuSelection || StateFlag == false)
       {
@@ -302,7 +345,7 @@ void loop()
     {
       if (YesNo == Yes)
       {
-        //Serial.print("Item");
+        // Serial.print("Item");
         Serial.print(MenuSelection);
       }
       State = AwaitingPayment;
@@ -319,13 +362,23 @@ void loop()
   case AwaitingPayment:
     if (StateFlag == false)
     {
-      DisplayTextCentered("Awaiting Payment");
+      DisplayAwaitingPayment();
       MillisTimerState1 = millis();
+      MillisTimerAnimation1 = millis();
       StateFlag = true;
     }
-    if (MillisTimerState1 + 30000 < millis())
+
+if (MillisTimerAnimation1 + AwaitingPaymentAnimationDuration < millis())
+{
+  MillisTimerAnimation1 = millis();
+  DisplayAwaitingPayment();
+  StateAnimation++;
+  if (StateAnimation > 4) StateAnimation = 0; 
+}
+
+    if (MillisTimerState1 + AwaitingPaymentDuration < millis())
     {
-      State = Error;
+      State = Timeout;
       InputChange = true;
       StateFlag = false;
     }
@@ -341,14 +394,31 @@ void loop()
   case Confirmation:
     if (StateFlag == false)
     {
-      DisplayTextCentered("Thanks for your support!");
-      digitalWrite(Relay1, HIGH);
+      DisplayConfirmation();
+      switch (MenuSelection)
+      {
+
+      case 0: digitalWrite(Relay1, LOW);
+      break;
+
+      case 1: digitalWrite(Relay2, LOW);
+      break;
+      
+      case 2: digitalWrite(Relay3, LOW);
+      break;
+      
+      case 3: digitalWrite(Relay4, LOW);
+      break;
+      
+      case 4: digitalWrite(Relay5, LOW);
+      break;
+      }
       MillisTimerState1 = millis();
       StateFlag = true;
     }
-    if (MillisTimerState1 + 1500 < millis())
+    if (MillisTimerState1 + PickupItemDuration < millis())
     {
-      State = Selection;
+      State = Welcome;
       InputChange = true;
       StateFlag = false;
       digitalWrite(Relay1, LOW);
@@ -358,12 +428,42 @@ void loop()
   case Error:
     if (StateFlag == false)
     {
-      // DEBUG Serial.println("Welcome Screen Placeholder");
       DisplayTextCentered("Error");
       MillisTimerState1 = millis();
       StateFlag = true;
     }
-    if (MillisTimerState1 + 1500 < millis())
+    if (MillisTimerState1 + 2300 < millis())
+    {
+      State = Selection;
+      InputChange = true;
+      StateFlag = false;
+    }
+    break;
+
+      case Timeout:
+    if (StateFlag == false)
+    {
+      DisplayTextCenteredY("Timeout", 40);
+      MillisTimerState1 = millis();
+      StateFlag = true;
+    }
+    if (MillisTimerState1 + 2300 < millis())
+    {
+      
+      State = Selection;
+      InputChange = true;
+      StateFlag = false;
+    }
+    break;
+
+          case CardDeclined:
+    if (StateFlag == false)
+    {
+      DisplayTextCenteredY("Timeout", 40);
+      MillisTimerState1 = millis();
+      StateFlag = true;
+    }
+    if (MillisTimerState1 + 2300 < millis())
     {
       State = Selection;
       InputChange = true;
@@ -388,11 +488,11 @@ void ReadRotaryEncoder(void)
   // It is pulled high, grounded when pressed
   if (RotaryEncoderButtonPressed != digitalRead(RotaryEncoderButtonPin))
   {
-    if (RotaryEncoderButtonPressed == true) // low to high / pressed to released
+    if (RotaryEncoderButtonPressed == true) // previous state was high/released, this is high to low
     {
       RotaryEncoderButtonPressed = false;
     }
-    else // high to low / released to pressed
+    else // previous state was low/pressed, this is low to high
     {
       // DEBUG Serial.println("Button pressed");
       if (millis() > RotaryEncoderButtonDebounce + SoftwareDebounce)
@@ -402,7 +502,6 @@ void ReadRotaryEncoder(void)
         // DEBUG Serial.println("Debounced Button pressed");
         InputChange = true;
       }
-
       RotaryEncoderButtonPressed = true;
     }
   }
@@ -432,6 +531,15 @@ void ReadRotaryEncoder(void)
   aLastState = aState; // Updates the previous state of the outputA with the current state
 }
 
+
+
+//
+//
+//
+// Display functions
+//
+//
+//
 void DisplayTextCentered(String TextToDisplay)
 {
   display.clearDisplay();
@@ -442,13 +550,15 @@ void DisplayTextCentered(String TextToDisplay)
   display.display();
 }
 
-//
-//
-//
-// Display functions
-//
-//
-//
+void DisplayTextCenteredY(String TextToDisplay, int XCoordinate)
+{
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(XCoordinate, 30);
+  display.println(TextToDisplay);
+  display.display();
+}
 
 void DisplaySelectionMenu(void)
 {
@@ -526,7 +636,7 @@ void DisplayItems(void)
     display.setCursor(10, 30);
     display.println("Tyrannopixelus Rex");
     display.setCursor(45, 40);
-    display.println("15 euros");
+    display.println("12 euros");
     break;
 
   case 1:
@@ -534,6 +644,8 @@ void DisplayItems(void)
     display.setTextColor(SSD1306_WHITE);
     display.setCursor(13, 20);
     display.println("Coffee Beans pins");
+    display.setCursor(30, 30);
+    display.println("or Tesla Pin");
     display.setCursor(45, 40);
     display.println("10 euros");
     break;
@@ -541,10 +653,10 @@ void DisplayItems(void)
   case 2:
     display.setTextSize(1);
     display.setTextColor(SSD1306_WHITE);
-    display.setCursor(10, 20);
-    display.println("Little Prince pins");
+    display.setCursor(15, 20);
+    display.println("MCH2022 Butterfly");
     display.setCursor(45, 40);
-    display.println("20 euros");
+    display.println("5 euros");
     break;
 
   case 3:
@@ -559,369 +671,58 @@ void DisplayItems(void)
   case 4:
     display.setTextSize(1);
     display.setTextColor(SSD1306_WHITE);
-    display.setCursor(20, 20);
-    display.println("Joule Thief Cat");
+    display.setCursor(12, 20);
+    display.println("Joule Thief Cat or");
+    display.setCursor(10, 30);
+    display.println("Little Prince pins");
     display.setCursor(45, 40);
-    display.println("25 euros");
+    display.println("20 euros");
 
     break;
   }
 }
 
-// ADAFRUIT ANIMATION
-// Show initial display buffer contents on the screen --
-// the library initializes this with an Adafruit splash screen.
-// display.display();
-// delay(200); // Pause for 2 seconds
-
-// Clear the buffer
-// display.clearDisplay();
-
-// Draw a single pixel in white
-// display.drawPixel(10, 10, SSD1306_WHITE);
-
-// Show the display buffer on the screen. You MUST call display() after
-// drawing commands to make them visible on screen!
-// display.display();
-// delay(200);
-// display.display() is NOT necessary after every single drawing command,
-// unless that's what you want...rather, you can batch up a bunch of
-// drawing operations and then update the screen all at once by calling
-// display.display(). These examples demonstrate both approaches...
-
-// Invert and restore display, pausing in-between
-// display.invertDisplay(true);
-// delay(100);
-// display.invertDisplay(false);
-// delay(100);
-
-// testanimate(logo_bmp, LOGO_WIDTH, LOGO_HEIGHT); // Animate bitmaps
-/*
-void testdrawline()
-{
-  int16_t i;
-
-  display.clearDisplay(); // Clear display buffer
-
-  for (i = 0; i < display.width(); i += 4)
-  {
-    display.drawLine(0, 0, i, display.height() - 1, SSD1306_WHITE);
-    display.display(); // Update screen with each newly-drawn line
-    delay(1);
-  }
-  for (i = 0; i < display.height(); i += 4)
-  {
-    display.drawLine(0, 0, display.width() - 1, i, SSD1306_WHITE);
-    display.display();
-    delay(1);
-  }
-  delay(250);
-
-  display.clearDisplay();
-
-  for (i = 0; i < display.width(); i += 4)
-  {
-    display.drawLine(0, display.height() - 1, i, 0, SSD1306_WHITE);
-    display.display();
-    delay(1);
-  }
-  for (i = display.height() - 1; i >= 0; i -= 4)
-  {
-    display.drawLine(0, display.height() - 1, display.width() - 1, i, SSD1306_WHITE);
-    display.display();
-    delay(1);
-  }
-  delay(250);
-
-  display.clearDisplay();
-
-  for (i = display.width() - 1; i >= 0; i -= 4)
-  {
-    display.drawLine(display.width() - 1, display.height() - 1, i, 0, SSD1306_WHITE);
-    display.display();
-    delay(1);
-  }
-  for (i = display.height() - 1; i >= 0; i -= 4)
-  {
-    display.drawLine(display.width() - 1, display.height() - 1, 0, i, SSD1306_WHITE);
-    display.display();
-    delay(1);
-  }
-  delay(250);
-
-  display.clearDisplay();
-
-  for (i = 0; i < display.height(); i += 4)
-  {
-    display.drawLine(display.width() - 1, 0, 0, i, SSD1306_WHITE);
-    display.display();
-    delay(1);
-  }
-  for (i = 0; i < display.width(); i += 4)
-  {
-    display.drawLine(display.width() - 1, 0, i, display.height() - 1, SSD1306_WHITE);
-    display.display();
-    delay(1);
-  }
-
-  delay(2000); // Pause for 2 seconds
-}
-
-void testdrawrect(void)
+void DisplayWelcomeTilde(void)
 {
   display.clearDisplay();
-
-  for (int16_t i = 0; i < display.height() / 2; i += 2)
-  {
-    display.drawRect(i, i, display.width() - 2 * i, display.height() - 2 * i, SSD1306_WHITE);
-    display.display(); // Update screen with each newly-drawn rectangle
-    delay(1);
-  }
-
-  delay(2000);
-}
-
-void testfillrect(void)
-{
-  display.clearDisplay();
-
-  for (int16_t i = 0; i < display.height() / 2; i += 3)
-  {
-    // The INVERSE color is used so rectangles alternate white/black
-    display.fillRect(i, i, display.width() - i * 2, display.height() - i * 2, SSD1306_INVERSE);
-    display.display(); // Update screen with each newly-drawn rectangle
-    delay(1);
-  }
-
-  delay(2000);
-}
-
-void testdrawcircle(void)
-{
-  display.clearDisplay();
-
-  for (int16_t i = 0; i < max(display.width(), display.height()) / 2; i += 2)
-  {
-    display.drawCircle(display.width() / 2, display.height() / 2, i, SSD1306_WHITE);
-    display.display();
-    delay(1);
-  }
-
-  delay(2000);
-}
-
-void testfillcircle(void)
-{
-  display.clearDisplay();
-
-  for (int16_t i = max(display.width(), display.height()) / 2; i > 0; i -= 3)
-  {
-    // The INVERSE color is used so circles alternate white/black
-    display.fillCircle(display.width() / 2, display.height() / 2, i, SSD1306_INVERSE);
-    display.display(); // Update screen with each newly-drawn circle
-    delay(1);
-  }
-
-  delay(2000);
-}
-
-void testdrawroundrect(void)
-{
-  display.clearDisplay();
-
-  for (int16_t i = 0; i < display.height() / 2 - 2; i += 2)
-  {
-    display.drawRoundRect(i, i, display.width() - 2 * i, display.height() - 2 * i,
-                          display.height() / 4, SSD1306_WHITE);
-    display.display();
-    delay(1);
-  }
-
-  delay(2000);
-}
-
-void testfillroundrect(void)
-{
-  display.clearDisplay();
-
-  for (int16_t i = 0; i < display.height() / 2 - 2; i += 2)
-  {
-    // The INVERSE color is used so round-rects alternate white/black
-    display.fillRoundRect(i, i, display.width() - 2 * i, display.height() - 2 * i,
-                          display.height() / 4, SSD1306_INVERSE);
-    display.display();
-    delay(1);
-  }
-
-  delay(2000);
-}
-
-void testdrawtriangle(void)
-{
-  display.clearDisplay();
-
-  for (int16_t i = 0; i < max(display.width(), display.height()) / 2; i += 5)
-  {
-    display.drawTriangle(
-        display.width() / 2, display.height() / 2 - i,
-        display.width() / 2 - i, display.height() / 2 + i,
-        display.width() / 2 + i, display.height() / 2 + i, SSD1306_WHITE);
-    display.display();
-    delay(1);
-  }
-
-  delay(2000);
-}
-
-void testfilltriangle(void)
-{
-  display.clearDisplay();
-
-  for (int16_t i = max(display.width(), display.height()) / 2; i > 0; i -= 5)
-  {
-    // The INVERSE color is used so triangles alternate white/black
-    display.fillTriangle(
-        display.width() / 2, display.height() / 2 - i,
-        display.width() / 2 - i, display.height() / 2 + i,
-        display.width() / 2 + i, display.height() / 2 + i, SSD1306_INVERSE);
-    display.display();
-    delay(1);
-  }
-
-  delay(2000);
-}
-
-void testdrawchar(void)
-{
-  display.clearDisplay();
-
-  display.setTextSize(1);              // Normal 1:1 pixel scale
-  display.setTextColor(SSD1306_WHITE); // Draw white text
-  display.setCursor(0, 0);             // Start at top-left corner
-  display.cp437(true);                 // Use full 256 char 'Code Page 437' font
-
-  // Not all the characters will fit on the display. This is normal.
-  // Library will draw what it can and the rest will be clipped.
-  for (int16_t i = 0; i < 256; i++)
-  {
-    if (i == '\n')
-      display.write(' ');
-    else
-      display.write(i);
-  }
-
-  display.display();
-  delay(2000);
-}
-
-void testdrawstyles(void)
-{
-  display.clearDisplay();
-
-  display.setTextSize(1);              // Normal 1:1 pixel scale
-  display.setTextColor(SSD1306_WHITE); // Draw white text
-  display.setCursor(0, 0);             // Start at top-left corner
-  display.println(F("Hello, world!"));
-
-  display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); // Draw 'inverse' text
-  display.println(3.141592);
-
-  display.setTextSize(2); // Draw 2X-scale text
   display.setTextColor(SSD1306_WHITE);
-  display.print(F("0x"));
-  display.println(0xDEADBEEF, HEX);
-
-  display.display();
-  delay(2000);
-}
-
-void testscrolltext(void)
-{
-  display.clearDisplay();
-
-  display.setTextSize(2); // Draw 2X-scale text
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(10, 0);
-  display.println(F("scroll"));
-  display.display(); // Show initial text
-  delay(100);
-
-  // Scroll in various directions, pausing in-between:
-  display.startscrollright(0x00, 0x0F);
-  delay(2000);
-  display.stopscroll();
-  delay(1000);
-  display.startscrollleft(0x00, 0x0F);
-  delay(2000);
-  display.stopscroll();
-  delay(1000);
-  display.startscrolldiagright(0x00, 0x07);
-  delay(2000);
-  display.startscrolldiagleft(0x00, 0x07);
-  delay(2000);
-  display.stopscroll();
-  delay(1000);
-}
-
-void testdrawbitmap(void)
-{
-  display.clearDisplay();
-
   display.drawBitmap(
       (display.width() - LOGO_WIDTH) / 2,
-      (display.height() - LOGO_HEIGHT) / 2,
+      (display.height() - LOGO_HEIGHT) / 2-10,
       logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
+  display.setTextSize(1);
+  display.setCursor(20, 45);
+  display.println("tilde mini mart");
   display.display();
-  delay(1000);
 }
 
-#define XPOS 0 // Indexes into the 'icons' array in function below
-#define YPOS 1
-#define DELTAY 2
-
-void testanimate(const uint8_t *bitmap, uint8_t w, uint8_t h)
+void DisplayAwaitingPayment (void)
 {
-  int8_t f, icons[NUMFLAKES][3];
+  display.clearDisplay();
+  display.setTextColor(SSD1306_WHITE);
+  display.setTextSize(1);
+  display.setCursor(15, 30);
+  display.println("Awaiting Payment");
+  display.setCursor(StateAnimation+2, 20);
+  display.println("////////////////////");
+  display.setCursor(StateAnimation+2, 40);
+  display.println("////////////////////");
+      display.fillRect(2, 20, 3, 28, SSD1306_BLACK);
+      display.fillRect(121, 20, 4, 28, SSD1306_BLACK);
 
-  // Initialize 'snowflake' positions
-  for (f = 0; f < NUMFLAKES; f++)
-  {
-    icons[f][XPOS] = random(1 - LOGO_WIDTH, display.width());
-    icons[f][YPOS] = -LOGO_HEIGHT;
-    icons[f][DELTAY] = random(1, 6);
-    Serial.print(F("x: "));
-    Serial.print(icons[f][XPOS], DEC);
-    Serial.print(F(" y: "));
-    Serial.print(icons[f][YPOS], DEC);
-    Serial.print(F(" dy: "));
-    Serial.println(icons[f][DELTAY], DEC);
-  }
+  display.display();
+}
 
-  for (;;)
-  {                         // Loop forever...
-    display.clearDisplay(); // Clear the display buffer
-
-    // Draw each snowflake:
-    for (f = 0; f < NUMFLAKES; f++)
-    {
-      display.drawBitmap(icons[f][XPOS], icons[f][YPOS], bitmap, w, h, SSD1306_WHITE);
-    }
-
-    display.display(); // Show the display buffer on the screen
-    delay(200);        // Pause for 1/10 second
-
-    // Then update coordinates of each flake...
-    for (f = 0; f < NUMFLAKES; f++)
-    {
-      icons[f][YPOS] += icons[f][DELTAY];
-      // If snowflake is off the bottom of the screen...
-      if (icons[f][YPOS] >= display.height())
-      {
-        // Reinitialize to a random position, just off the top
-        icons[f][XPOS] = random(1 - LOGO_WIDTH, display.width());
-        icons[f][YPOS] = -LOGO_HEIGHT;
-        icons[f][DELTAY] = random(1, 6);
-      }
-    }
-  }
-}*/
+void DisplayConfirmation(void)
+{
+  display.clearDisplay();
+  display.setTextColor(SSD1306_WHITE);
+  display.setTextSize(1);
+  display.setCursor(20, 10);
+  display.println("Thank you for");
+  display.setCursor(20, 20);
+display.println("your support!");
+  display.setCursor(20, 45);
+  display.println("the tilde team~");
+    display.display();
+}
