@@ -1,10 +1,8 @@
-// use the KG-02 POS
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <Stepper.h>
 
 
 
@@ -22,12 +20,12 @@
 #define RotaryEncoderButtonPin 23
 #define pullupbutton 22
 #define PowerEncoder 21
-#define Relay1 0 // kex red
-#define Relay2 2  
-#define Relay3 35
-#define Relay4 16 // orange patch
-#define Relay5 4 //JT blue
-#define Relay6 15 
+#define Relay1 2
+#define Relay2 0
+#define Relay3 4
+#define Relay4 16
+#define Relay5 17
+#define Relay6 15
 
 #define SoftwareDebounce 100 // Delay of 100ms between presses
 
@@ -42,7 +40,7 @@
 
 #define WelcomeScreenDuration 3000
 #define AwaitingPaymentDuration 30000
-#define PickupItemDuration 3000
+#define PickupItemDuration 30000
 #define AwaitingPaymentAnimationDuration 100
 
 #define OriginXSelection 6  // Top left
@@ -167,12 +165,6 @@ bool InputChange = false;
 int MenuSelection = 0; // used to select the item and is kept in memory
 int YesNo = 0;
 bool PaymentReceivedFlag = false;
-
-const int stepsPerRevolution = 2038;
-
-// Creates an instance of stepper class
-// Pins entered in sequence IN1-IN3-IN2-IN4 for proper step sequence
-Stepper myStepper = Stepper(stepsPerRevolution, 17, 5, 18, 19);
 
 int ItemsPrice[5] = {15, 10, 20, 8, 25};
 // char *ItemsNames[] = {"Scarabs/Tyrannopixelus Rex", "Coffee Beans pins", "Little Prince pins", "Patch", "Joule Thief Cat"};
@@ -373,7 +365,6 @@ else digitalWrite(Relay5, HIGH);*/
     break;
 
   case AwaitingPayment:
-
     if (StateFlag == false)
     {
       DisplayAwaitingPayment();
@@ -427,11 +418,6 @@ if (MillisTimerAnimation1 + AwaitingPaymentAnimationDuration < millis())
       case 4: digitalWrite(Relay5, LOW);
       break;
       }
-
-  myStepper.setSpeed(10);
-  myStepper.step(-stepsPerRevolution);
-  delay(1000);
-
       MillisTimerState1 = millis();
       StateFlag = true;
     }
